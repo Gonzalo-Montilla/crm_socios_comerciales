@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ cliente.nombre }} - CRM Socios Comerciales{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="fas fa-user me-2"></i>{{ cliente.nombre }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><strong>Información Personal</strong></h6>
+                            <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
+                            <p><strong>Cédula:</strong> {{ cliente.cedula }}</p>
+                            <p><strong>Teléfono:</strong> {{ cliente.telefono|default:"No registrado" }}</p>
+                            <p><strong>Email:</strong> {{ cliente.email|default:"No registrado" }}</p>
+                            <p><strong>Ciudad:</strong> {{ cliente.ciudad|default:"No registrada" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><strong>Información de Compra</strong></h6>
+                            <p><strong>Fecha de Compra:</strong> {{ cliente.fecha_compra }}</p>
+                            <p><strong>Valor de Compra:</strong> ${{ cliente.valor_compra|floatformat:2|intcomma }}</p>
+                            <p><strong>Socio Comercial:</strong> {{ cliente.socio_comercial.nombre }}</p>
+                            <p><strong>Fecha de Creación:</strong> {{ cliente.fecha_creacion }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if cliente.observaciones %}
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6><strong>Observaciones</strong></h6>
+                            <p class="text-muted">{{ cliente.observaciones }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'clientes:editar' cliente.pk %}" class="btn btn-warning">
+                        <i class="fas fa-edit me-1"></i>Editar
+                    </a>
+                    <a href="{% url 'clientes:eliminar' cliente.pk %}" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Eliminar
+                    </a>
+                    <a href="{% url 'clientes:lista' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Volver a la lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ seccion }} - Próximamente{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-tools text-warning" style="font-size: 4rem;"></i>
+                <h3 class="mt-3">{{ seccion }} - En Desarrollo</h3>
+                <p class="lead text-muted">Esta sección está siendo desarrollada.</p>
+                <p>Mientras tanto, puedes usar el <strong>Panel de Administración</strong> para gestionar los datos.</p>
+                <hr>
+                <a href="/admin/" class="btn btn-primary">
+                    <i class="bi bi-gear"></i> Ir al Panel de Admin
+                </a>
+                <a href="{% url 'dashboard:home' %}" class="btn btn-secondary">
+                    <i class="bi bi-house"></i> Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Funcionalidades Disponibles en Admin</h5>
+            </div>
+            <div class="card-body">
+                {% if seccion == "Socios Comerciales" %}
+                <h6>Gestión de Socios Comerciales:</h6>
+                <ul>
+                    <li>Crear, editar y eliminar socios comerciales</li>
+                    <li>Subir documentos de contratos</li>
+                    <li>Gestionar información de contacto</li>
+                    <li>Control de estado activo/inactivo</li>
+                </ul>
+                {% elif seccion == "Clientes" %}
+                <h6>Administración de Clientes:</h6>
+                <ul>
+                    <li>Registrar nuevos clientes</li>
+                    <li>Gestionar cupos de crédito</li>
+                    <li>Asociar clientes con socios comerciales</li>
+                    <li>Controlar fechas y valores de compra</li>
+                </ul>
+                {% elif seccion == "Seguimiento de Socios" %}
+                <h6>Seguimiento de Procesos:</h6>
+                <ul>
+                    <li>Crear seguimientos para socios potenciales</li>
+                    <li>Marcar etapas del proceso comercial</li>
+                    <li>Control de fechas por cada paso</li>
+                    <li>Visualizar progreso de cada socio</li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

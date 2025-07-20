@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Seguimiento de Socios - CRM Socios Comerciales{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="card-title">
+                                <i class="fas fa-tasks me-2"></i>Seguimiento de Socios
+                            </h4>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a href="{% url 'seguimiento:crear' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>Nuevo Seguimiento
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Dashboard de Estadísticas -->
+                    {% if estadisticas.total > 0 %}
+                    <div class="mb-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-chart-bar me-2"></i>Dashboard de Estadísticas
+                        </h5>
+                        
+                        <!-- Resumen General -->
+                        <div class="row mb-3">
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="card border-primary">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                        <h4 class="card-title text-primary mb-1">{{ estadisticas.total }}</h4>
+                                        <p class="card-text small text-muted">Total Seguimientos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="card border-success">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                        <h4 class="card-title text-success mb-1">{{ estadisticas.por_estado.completado.count|default:0 }}</h4>
+                                        <p class="card-text small text-muted">Completados ({{ estadisticas.por_estado.completado.porcentaje|default:0 }}%)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="card border-warning">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                                        <h4 class="card-title text-warning mb-1">{{ estadisticas.por_estado.en_proceso.count|default:0 }}</h4>
+                                        <p class="card-text small text-muted">En Proceso ({{ estadisticas.por_estado.en_proceso.porcentaje|default:0 }}%)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="card border-secondary">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-pause-circle fa-2x text-secondary mb-2"></i>
+                                        <h4 class="card-title text-secondary mb-1">{{ estadisticas.por_estado.pendiente.count|default:0 }}</h4>
+                                        <p class="card-text small text-muted">Pendientes ({{ estadisticas.por_estado.pendiente.porcentaje|default:0 }}%)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Progreso por Etapa -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-tasks me-2"></i>Progreso por Etapa del Proceso</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            {% for key, etapa in estadisticas.por_etapa.items %}
+                                            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                                                <div class="text-center">
+                                                    <div class="mb-2">
+                                                        <span style="font-size: 1.5em;">{{ etapa.icono }}</span>
+                                                    </div>
+                                                    <h6 class="mb-1">{{ etapa.count }}/{{ estadisticas.total }}</h6>
+                                                    <p class="small text-muted mb-1">{{ etapa.nombre }}</p>
+                                                    <div class="progress" style="height: 6px;">
+                                                        <div class="progress-bar bg-{% if etapa.porcentaje >= 75 %}success{% elif etapa.porcentaje >= 50 %}warning{% else %}danger{% endif %}" 
+                                                             role="progressbar" 
+                                                             style="width: {{ etapa.porcentaje }}%" 
+                                                             aria-valuenow="{{ etapa.porcentaje }}" 
+                                                             aria-valuemin="0" 
+                                                             aria-valuemax="100">
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted">{{ etapa.porcentaje }}%</small>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Métricas y Tendencias -->
+                        <div class="row mb-3">
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card border-info">
+                                    <div class="card-header bg-info bg-opacity-10">
+                                        <h6 class="mb-0 text-info"><i class="fas fa-calendar-week me-2"></i>Esta Semana</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="small">Nuevos:</span>
+                                            <strong class="text-primary">{{ estadisticas.tendencias.esta_semana.nuevos }}</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="small">Completados:</span>
+                                            <strong class="text-success">{{ estadisticas.tendencias.esta_semana.completados }}</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="small">Contratos Firmados:</span>
+                                            <strong class="text-warning">{{ estadisticas.tendencias.esta_semana.contratos_firmados }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card border-success">
+                                    <div class="card-header bg-success bg-opacity-10">
+                                        <h6 class="mb-0 text-success"><i class="fas fa-calendar-alt me-2"></i>Este Mes</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="small">Nuevos:</span>
+                                            <strong class="text-primary">{{ estadisticas.tendencias.este_mes.nuevos }}</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="small">Completados:</span>
+                                            <strong class="text-success">{{ estadisticas.tendencias.este_mes.completados }}</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="small">Tasa de Conversión:</span>
+                                            <strong class="text-info">{{ estadisticas.tendencias.este_mes.tasa_conversion }}%</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-12 mb-3">
+                                <div class="card border-warning">
+                                    <div class="card-header bg-warning bg-opacity-10">
+                                        <h6 class="mb-0 text-warning"><i class="fas fa-clock me-2"></i>Métricas de Tiempo</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="small">Promedio Días:</span>
+                                            <strong class="text-info">{{ estadisticas.metricas_tiempo.promedio_dias|default:"N/A" }}</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="small">Vencidos (45+ días):</span>
+                                            <strong class="text-danger">{{ estadisticas.metricas_tiempo.vencidos }}</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="small">Próx. Vencer (30+ días):</span>
+                                            <strong class="text-warning">{{ estadisticas.metricas_tiempo.proximos_vencer }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="mb-4">
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Filtros -->
+                    <form method="get" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o ciudad..." value="{{ query }}">
+                            </div>
+                            <div class="col-md-3">
+                                <select name="estado" class="form-select">
+                                    <option value="">Todos los estados</option>
+                                    {% for value, label in estados %}
+                                        <option value="{{ value }}" {% if estado == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="proceso" class="form-select">
+                                    <option value="">Todos los procesos</option>
+                                    <option value="completo" {% if proceso == 'completo' %}selected{% endif %}>Proceso Completo</option>
+                                    <option value="pendiente" {% if proceso == 'pendiente' %}selected{% endif %}>Proceso Pendiente</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <i class="fas fa-search me-1"></i>Filtrar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Lista de seguimientos -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Socio Potencial</th>
+                                    <th>Ciudad</th>
+                                    <th>Estado</th>
+                                    <th>Estado del Proceso</th>
+                                    <th>Última Actualización</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for seguimiento in seguimientos %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ seguimiento.socio_potencial }}</strong>
+                                        {% if seguimiento.socio_comercial %}
+                                            <br><small class="text-success">
+                                                <i class="fas fa-check-circle"></i> Socio Comercial: {{ seguimiento.socio_comercial.nombre }}
+                                            </small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ seguimiento.ciudad|default:"-" }}</td>
+                                    <td>
+                                        {% if seguimiento.estado == 'completado' %}
+                                            <span class="badge bg-success">{{ seguimiento.get_estado_display }}</span>
+                                        {% elif seguimiento.estado == 'en_proceso' %}
+                                            <span class="badge bg-warning text-dark">{{ seguimiento.get_estado_display }}</span>
+                                        {% elif seguimiento.estado == 'cancelado' %}
+                                            <span class="badge bg-danger">{{ seguimiento.get_estado_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ seguimiento.get_estado_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="row g-1 small">
+                                            <div class="col-6">
+                                                <div class="d-flex align-items-start mb-1">
+                                                    {% if seguimiento.presentacion_negocio %}
+                                                        <i class="fas fa-check-circle text-success me-1 mt-1"></i>
+                                                        <div>
+                                                            <span class="text-success">Presentación</span>
+                                                            {% if seguimiento.fecha_presentacion %}
+                                                                <br><small class="text-muted">{{ seguimiento.fecha_presentacion|date:"d/m/Y" }}</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% else %}
+                                                        <i class="fas fa-circle text-muted me-1 mt-1"></i>
+                                                        <span class="text-muted">Presentación</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="d-flex align-items-start mb-1">
+                                                    {% if seguimiento.documentos_enviados %}
+                                                        <i class="fas fa-check-circle text-success me-1 mt-1"></i>
+                                                        <div>
+                                                            <span class="text-success">Documentos</span>
+                                                            {% if seguimiento.fecha_envio_documentos %}
+                                                                <br><small class="text-muted">{{ seguimiento.fecha_envio_documentos|date:"d/m/Y" }}</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% else %}
+                                                        <i class="fas fa-circle text-muted me-1 mt-1"></i>
+                                                        <span class="text-muted">Documentos</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="d-flex align-items-start mb-1">
+                                                    {% if seguimiento.contrato_enviado %}
+                                                        <i class="fas fa-check-circle text-success me-1 mt-1"></i>
+                                                        <div>
+                                                            <span class="text-success">Contrato Enviado</span>
+                                                            {% if seguimiento.fecha_envio_contrato %}
+                                                                <br><small class="text-muted">{{ seguimiento.fecha_envio_contrato|date:"d/m/Y" }}</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% else %}
+                                                        <i class="fas fa-circle text-muted me-1 mt-1"></i>
+                                                        <span class="text-muted">Contrato Enviado</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-flex align-items-start mb-1">
+                                                    {% if seguimiento.contrato_firmado %}
+                                                        <i class="fas fa-check-circle text-success me-1 mt-1"></i>
+                                                        <div>
+                                                            <span class="text-success">Contrato Firmado</span>
+                                                            {% if seguimiento.fecha_firma_contrato %}
+                                                                <br><small class="text-muted">{{ seguimiento.fecha_firma_contrato|date:"d/m/Y" }}</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% else %}
+                                                        <i class="fas fa-circle text-muted me-1 mt-1"></i>
+                                                        <span class="text-muted">Contrato Firmado</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="d-flex align-items-start mb-1">
+                                                    {% if seguimiento.capacitacion_realizada %}
+                                                        <i class="fas fa-check-circle text-success me-1 mt-1"></i>
+                                                        <div>
+                                                            <span class="text-success">Capacitación</span>
+                                                            {% if seguimiento.fecha_capacitacion %}
+                                                                <br><small class="text-muted">{{ seguimiento.fecha_capacitacion|date:"d/m/Y" }}</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% else %}
+                                                        <i class="fas fa-circle text-muted me-1 mt-1"></i>
+                                                        <span class="text-muted">Capacitación</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="d-flex align-items-start mb-1">
+                                                    {% if seguimiento.usuario_creado %}
+                                                        <i class="fas fa-check-circle text-success me-1 mt-1"></i>
+                                                        <div>
+                                                            <span class="text-success">Usuario Creado</span>
+                                                            {% if seguimiento.fecha_creacion_usuario %}
+                                                                <br><small class="text-muted">{{ seguimiento.fecha_creacion_usuario|date:"d/m/Y" }}</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% else %}
+                                                        <i class="fas fa-circle text-muted me-1 mt-1"></i>
+                                                        <span class="text-muted">Usuario Creado</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Porcentaje pequeño debajo -->
+                                        <small class="text-muted d-block mt-1">
+                                            {{ seguimiento.porcentaje_completado|floatformat:0 }}% completado
+                                        </small>
+                                    </td>
+                                    <td>{{ seguimiento.fecha_actualizacion|naturaltime }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'seguimiento:detalle' seguimiento.pk %}" class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'seguimiento:editar' seguimiento.pk %}" class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'seguimiento:eliminar' seguimiento.pk %}" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i><br>
+                                        No hay seguimientos que coincidan con los filtros seleccionados.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    {% if seguimientos.has_other_pages %}
+                    <nav aria-label="Paginación">
+                        <ul class="pagination justify-content-center">
+                            {% if seguimientos.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if estado %}estado={{ estado }}&{% endif %}{% if proceso %}proceso={{ proceso }}&{% endif %}page=1">Primera</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if estado %}estado={{ estado }}&{% endif %}{% if proceso %}proceso={{ proceso }}&{% endif %}page={{ seguimientos.previous_page_number }}">Anterior</a>
+                                </li>
+                            {% endif %}
+                            
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Página {{ seguimientos.number }} de {{ seguimientos.paginator.num_pages }}
+                                </span>
+                            </li>
+                            
+                            {% if seguimientos.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if estado %}estado={{ estado }}&{% endif %}{% if proceso %}proceso={{ proceso }}&{% endif %}page={{ seguimientos.next_page_number }}">Siguiente</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if estado %}estado={{ estado }}&{% endif %}{% if proceso %}proceso={{ proceso }}&{% endif %}page={{ seguimientos.paginator.num_pages }}">Última</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

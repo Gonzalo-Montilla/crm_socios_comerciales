@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar Cliente - CRM Socios Comerciales{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmar Eliminación
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <strong>¡Atención!</strong> Esta acción no se puede deshacer.
+                    </div>
+                    <p>¿Está seguro que desea eliminar el cliente <strong>{{ object.nombre }}</strong>?</p>
+                    
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <h6>Información del cliente:</h6>
+                        <ul class="mb-0">
+                            <li><strong>Nombre:</strong> {{ object.nombre }}</li>
+                            <li><strong>Cédula:</strong> {{ object.cedula }}</li>
+                            <li><strong>Fecha de compra:</strong> {{ object.fecha_compra }}</li>
+                            <li><strong>Valor de compra:</strong> ${{ object.valor_compra }}</li>
+                            <li><strong>Socio comercial:</strong> {{ object.socio_comercial.nombre }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>Sí, eliminar
+                        </button>
+                    </form>
+                    <a href="{% url 'clientes:detalle' object.pk %}" class="btn btn-info">
+                        <i class="fas fa-eye me-1"></i>Ver detalle
+                    </a>
+                    <a href="{% url 'clientes:lista' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

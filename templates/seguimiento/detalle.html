@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ seguimiento.socio_potencial }} - CRM Socios Comerciales{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="fas fa-tasks me-2"></i>{{ seguimiento.socio_potencial }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><strong>Información Básica</strong></h6>
+                            <p><strong>Socio Potencial:</strong> {{ seguimiento.socio_potencial }}</p>
+                            <p><strong>Teléfono:</strong> {{ seguimiento.telefono|default:"No registrado" }}</p>
+                            <p><strong>Email:</strong> {{ seguimiento.email|default:"No registrado" }}</p>
+                            <p><strong>Ciudad:</strong> {{ seguimiento.ciudad|default:"No registrada" }}</p>
+                            <p><strong>Estado:</strong>
+                                <span class="badge 
+                                {% if seguimiento.estado == 'completado' %}bg-success
+                                {% elif seguimiento.estado == 'en_proceso' %}bg-warning text-dark
+                                {% elif seguimiento.estado == 'cancelado' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                    {{ seguimiento.get_estado_display }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><strong>Progreso</strong></h6>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar {% if seguimiento.porcentaje_completado == 100 %}bg-success{% elif seguimiento.porcentaje_completado >= 50 %}bg-warning{% else %}bg-info{% endif %}"
+                                     role="progressbar"
+                                     style="width: {{ seguimiento.porcentaje_completado }}%">
+                                    {{ seguimiento.porcentaje_completado|floatformat:0 }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6><strong>Observaciones</strong></h6>
+                            <p class="text-muted">{{ seguimiento.observaciones|default:"Sin observaciones" }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'seguimiento:editar' seguimiento.pk %}" class="btn btn-warning">
+                        <i class="fas fa-edit me-1"></i>Editar
+                    </a>
+                    <a href="{% url 'seguimiento:eliminar' seguimiento.pk %}" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Eliminar
+                    </a>
+                    <a href="{% url 'seguimiento:lista' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Volver a la lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
