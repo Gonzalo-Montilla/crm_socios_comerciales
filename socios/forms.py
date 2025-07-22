@@ -7,7 +7,7 @@ from crispy_forms.bootstrap import FormActions
 class SocioComercialForm(forms.ModelForm):
     class Meta:
         model = SocioComercial
-        fields = ['nombre', 'fecha_ingreso', 'ciudad_sede', 'documento_contrato',
+        fields = ['nombre', 'fecha_ingreso', 'ciudad_sede', 'asesor_asignado', 'documento_contrato',
                  'activo', 'telefono', 'email']
         widgets = {
             'fecha_ingreso': forms.DateInput(attrs={'type': 'date'}),
@@ -15,6 +15,18 @@ class SocioComercialForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Si tenemos una instancia (editando), asegurar que las fechas se muestren
+        if self.instance and self.instance.pk:
+            # Asegurar que el widget tenga el valor correcto
+            if hasattr(self.fields['fecha_ingreso'].widget, 'attrs'):
+                if self.instance.fecha_ingreso:
+                    self.fields['fecha_ingreso'].widget.attrs['value'] = self.instance.fecha_ingreso.strftime('%Y-%m-%d')
+            
+            # También establecer el initial
+            self.initial.update({
+                'fecha_ingreso': self.instance.fecha_ingreso,
+            })
+        
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Row(
@@ -28,8 +40,9 @@ class SocioComercialForm(forms.ModelForm):
                 css_class='form-row'
             ),
             Row(
-                Column('telefono', css_class='form-group col-md-6 mb-0'),
-                Column('email', css_class='form-group col-md-6 mb-0'),
+                Column('asesor_asignado', css_class='form-group col-md-4 mb-0'),
+                Column('telefono', css_class='form-group col-md-4 mb-0'),
+                Column('email', css_class='form-group col-md-4 mb-0'),
                 css_class='form-row'
             ),
             'documento_contrato',

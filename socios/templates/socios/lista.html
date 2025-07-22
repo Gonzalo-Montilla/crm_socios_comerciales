@@ -15,6 +15,9 @@
                         </h4>
                     </div>
                     <div class="col-md-6 text-end">
+                        <a href="{% url 'export_socios_csv' %}" class="btn btn-success btn-sm me-2">
+                            <i class="fas fa-download me-1"></i>Exportar CSV
+                        </a>
                         <a href="{% url 'socios:crear' %}" class="btn btn-light btn-sm">
                             <i class="fas fa-plus me-1"></i>Nuevo Socio
                         </a>
@@ -129,6 +132,7 @@
                         <thead>
                             <tr>
                                 <th>Nombre</th>
+                                <th>Asesor Asignado</th>
                                 <th>Ciudad</th>
                                 <th>Fecha Ingreso</th>
                                 <th>Estado</th>
@@ -144,6 +148,13 @@
                                     <strong>{{ socio.nombre }}</strong>
                                     {% if socio.email %}
                                     <br><small class="text-muted">{{ socio.email }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if socio.asesor_asignado %}
+                                        <span class="badge bg-info">{{ socio.asesor_asignado }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
                                     {% endif %}
                                 </td>
                                 <td>{{ socio.ciudad_sede }}</td>

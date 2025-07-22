@@ -14,6 +14,12 @@ class SocioComercial(models.Model):
         null=True
     )
     activo = models.BooleanField(default=True, verbose_name="Activo")
+    asesor_asignado = models.CharField(
+        max_length=200, 
+        verbose_name="Asesor Asignado", 
+        blank=True,
+        help_text="Nombre del asesor que atendió este socio comercial"
+    )
     telefono = models.CharField(max_length=20, verbose_name="Teléfono", blank=True)
     email = models.EmailField(verbose_name="Email", blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -40,3 +46,16 @@ class SocioComercial(models.Model):
         """Cuenta la cantidad de ventas del socio"""
         from clientes.models import Cliente
         return Cliente.objects.filter(socio_comercial=self).count()
+    
+    def save(self, *args, **kwargs):
+        # Si es una actualización, obtener el objeto existente para preservar fechas
+        if self.pk:
+            try:
+                existing = SocioComercial.objects.get(pk=self.pk)
+                # Preservar fecha_ingreso si está vacía pero existía antes
+                if not self.fecha_ingreso and existing.fecha_ingreso:
+                    self.fecha_ingreso = existing.fecha_ingreso
+            except SocioComercial.DoesNotExist:
+                pass
+        
+        super().save(*args, **kwargs)

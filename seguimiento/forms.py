@@ -9,7 +9,7 @@ class SeguimientoSocioForm(forms.ModelForm):
     class Meta:
         model = SeguimientoSocio
         fields = [
-            'socio_potencial', 'socio_comercial', 'estado',
+            'socio_potencial', 'asesor_asignado', 'estado',
             'presentacion_negocio', 'fecha_presentacion',
             'documentos_enviados', 'fecha_envio_documentos',
             'contrato_enviado', 'fecha_envio_contrato',
@@ -46,12 +46,12 @@ class SeguimientoSocioForm(forms.ModelForm):
             Fieldset(
                 'Información Básica',
                 Row(
-                    Column('socio_potencial', css_class='form-group col-md-8 mb-0'),
-                    Column('estado', css_class='form-group col-md-4 mb-0'),
+                    Column('socio_potencial', css_class='form-group col-md-6 mb-0'),
+                    Column('asesor_asignado', css_class='form-group col-md-6 mb-0'),
                     css_class='form-row'
                 ),
                 Row(
-                    Column('socio_comercial', css_class='form-group col-md-12 mb-0'),
+                    Column('estado', css_class='form-group col-md-12 mb-0'),
                     css_class='form-row'
                 ),
                 Row(

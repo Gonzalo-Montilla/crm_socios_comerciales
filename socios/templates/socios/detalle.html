@@ -20,6 +20,13 @@
                             <p><strong>Nombre:</strong> {{ socio.nombre }}</p>
                             <p><strong>Fecha de Ingreso:</strong> {{ socio.fecha_ingreso }}</p>
                             <p><strong>Ciudad Sede:</strong> {{ socio.ciudad_sede }}</p>
+                            <p><strong>Asesor Asignado:</strong> 
+                                {% if socio.asesor_asignado %}
+                                    <span class="badge bg-info">{{ socio.asesor_asignado }}</span>
+                                {% else %}
+                                    <span class="text-muted">No asignado</span>
+                                {% endif %}
+                            </p>
                             <p><strong>Estado:</strong> 
                                 {% if socio.activo %}
                                     <span class="badge bg-success">Activo</span>

@@ -90,6 +90,12 @@ class SeguimientoSocio(models.Model):
     )
     
     # Información adicional
+    asesor_asignado = models.CharField(
+        max_length=200, 
+        verbose_name="Asesor Asignado", 
+        blank=True,
+        help_text="Nombre del asesor que atendió este cliente"
+    )
     telefono = models.CharField(max_length=20, verbose_name="Teléfono", blank=True)
     email = models.EmailField(verbose_name="Email", blank=True)
     ciudad = models.CharField(max_length=100, verbose_name="Ciudad", blank=True)
@@ -130,6 +136,40 @@ class SeguimientoSocio(models.Model):
     
     def save(self, *args, **kwargs):
         from datetime import date
+        
+        # Si es una actualización, obtener el objeto existente para preservar fechas
+        if self.pk:
+            try:
+                existing = SeguimientoSocio.objects.get(pk=self.pk)
+                # Preservar fechas existentes si el campo aún está marcado como True
+                if self.presentacion_negocio and existing.fecha_presentacion:
+                    self.fecha_presentacion = existing.fecha_presentacion
+                if self.documentos_enviados and existing.fecha_envio_documentos:
+                    self.fecha_envio_documentos = existing.fecha_envio_documentos
+                if self.contrato_enviado and existing.fecha_envio_contrato:
+                    self.fecha_envio_contrato = existing.fecha_envio_contrato
+                if self.contrato_firmado and existing.fecha_firma_contrato:
+                    self.fecha_firma_contrato = existing.fecha_firma_contrato
+                if self.capacitacion_realizada and existing.fecha_capacitacion:
+                    self.fecha_capacitacion = existing.fecha_capacitacion
+                if self.usuario_creado and existing.fecha_creacion_usuario:
+                    self.fecha_creacion_usuario = existing.fecha_creacion_usuario
+                    
+                # Limpiar fechas si el paso se desmarca
+                if not self.presentacion_negocio:
+                    self.fecha_presentacion = None
+                if not self.documentos_enviados:
+                    self.fecha_envio_documentos = None
+                if not self.contrato_enviado:
+                    self.fecha_envio_contrato = None
+                if not self.contrato_firmado:
+                    self.fecha_firma_contrato = None
+                if not self.capacitacion_realizada:
+                    self.fecha_capacitacion = None
+                if not self.usuario_creado:
+                    self.fecha_creacion_usuario = None
+            except SeguimientoSocio.DoesNotExist:
+                pass
         
         # Auto-asignar fechas cuando se marca como completado un paso (solo si no tiene fecha)
         if self.presentacion_negocio and not self.fecha_presentacion:

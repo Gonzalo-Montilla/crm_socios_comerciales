@@ -8,12 +8,24 @@ from .forms import SeguimientoSocioForm
 from django.db.models import Q, Count, Avg
 from datetime import datetime, timedelta
 from django.utils import timezone
+from django.http import HttpResponse
+import csv
 
 class SeguimientoSocioListView(LoginRequiredMixin, ListView):
     model = SeguimientoSocio
     template_name = 'seguimiento/lista.html'
     context_object_name = 'seguimientos'
     paginate_by = 20
+    
+    def export_seguimientos_csv(self, request):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="seguimientos.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['ID', 'Socio Potencial', 'Estado', 'Fecha de Creación', 'Fecha de Actualización', 'Asesor Asignado'])
+        seguimientos = SeguimientoSocio.objects.all().values_list('id', 'socio_potencial', 'estado', 'fecha_creacion', 'fecha_actualizacion', 'asesor_asignado')
+        for seguimiento in seguimientos:
+            writer.writerow(seguimiento)
+        return response
     
     def get_queryset(self):
         queryset = SeguimientoSocio.objects.select_related('socio_comercial').order_by('-fecha_actualizacion')

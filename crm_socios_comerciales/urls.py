@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from services.export_views import ExportClientesCSV, ExportSociosCSV, ExportSeguimientosCSV
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +27,10 @@ urlpatterns = [
     path('clientes/', include('clientes.urls')),
     path('socios/', include('socios.urls')),
     path('seguimiento/', include('seguimiento.urls')),
+    # URLs para exportación
+    path('exports/clientes/', ExportClientesCSV.as_view(), name='export_clientes_csv'),
+    path('exports/socios/', ExportSociosCSV.as_view(), name='export_socios_csv'),
+    path('exports/seguimientos/', ExportSeguimientosCSV.as_view(), name='export_seguimientos_csv'),
 ]
 
 # Servir archivos media en desarrollo

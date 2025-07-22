@@ -21,6 +21,13 @@
                             <p><strong>Teléfono:</strong> {{ seguimiento.telefono|default:"No registrado" }}</p>
                             <p><strong>Email:</strong> {{ seguimiento.email|default:"No registrado" }}</p>
                             <p><strong>Ciudad:</strong> {{ seguimiento.ciudad|default:"No registrada" }}</p>
+                            <p><strong>Asesor Asignado:</strong> 
+                                {% if seguimiento.asesor_asignado %}
+                                    <span class="badge bg-info">{{ seguimiento.asesor_asignado }}</span>
+                                {% else %}
+                                    <span class="text-muted">No asignado</span>
+                                {% endif %}
+                            </p>
                             <p><strong>Estado:</strong>
                                 <span class="badge 
                                 {% if seguimiento.estado == 'completado' %}bg-success
@@ -43,6 +50,108 @@
                         </div>
                     </div>
 
+                    <!-- Seguimiento del Proceso -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6><strong>Estado del Proceso</strong></h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        {% if seguimiento.presentacion_negocio %}
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            <div>
+                                                <span class="text-success fw-bold">Presentación de Negocio</span>
+                                                {% if seguimiento.fecha_presentacion %}
+                                                    <br><small class="text-muted">{{ seguimiento.fecha_presentacion|date:"d/m/Y" }}</small>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <i class="fas fa-circle text-muted me-2"></i>
+                                            <span class="text-muted">Presentación de Negocio</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center mb-2">
+                                        {% if seguimiento.documentos_enviados %}
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            <div>
+                                                <span class="text-success fw-bold">Documentos Enviados</span>
+                                                {% if seguimiento.fecha_envio_documentos %}
+                                                    <br><small class="text-muted">{{ seguimiento.fecha_envio_documentos|date:"d/m/Y" }}</small>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <i class="fas fa-circle text-muted me-2"></i>
+                                            <span class="text-muted">Documentos Enviados</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center mb-2">
+                                        {% if seguimiento.contrato_enviado %}
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            <div>
+                                                <span class="text-success fw-bold">Contrato Enviado</span>
+                                                {% if seguimiento.fecha_envio_contrato %}
+                                                    <br><small class="text-muted">{{ seguimiento.fecha_envio_contrato|date:"d/m/Y" }}</small>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <i class="fas fa-circle text-muted me-2"></i>
+                                            <span class="text-muted">Contrato Enviado</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        {% if seguimiento.contrato_firmado %}
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            <div>
+                                                <span class="text-success fw-bold">Contrato Firmado</span>
+                                                {% if seguimiento.fecha_firma_contrato %}
+                                                    <br><small class="text-muted">{{ seguimiento.fecha_firma_contrato|date:"d/m/Y" }}</small>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <i class="fas fa-circle text-muted me-2"></i>
+                                            <span class="text-muted">Contrato Firmado</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center mb-2">
+                                        {% if seguimiento.capacitacion_realizada %}
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            <div>
+                                                <span class="text-success fw-bold">Capacitación Realizada</span>
+                                                {% if seguimiento.fecha_capacitacion %}
+                                                    <br><small class="text-muted">{{ seguimiento.fecha_capacitacion|date:"d/m/Y" }}</small>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <i class="fas fa-circle text-muted me-2"></i>
+                                            <span class="text-muted">Capacitación Realizada</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center mb-2">
+                                        {% if seguimiento.usuario_creado %}
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            <div>
+                                                <span class="text-success fw-bold">Usuario Creado</span>
+                                                {% if seguimiento.fecha_creacion_usuario %}
+                                                    <br><small class="text-muted">{{ seguimiento.fecha_creacion_usuario|date:"d/m/Y" }}</small>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <i class="fas fa-circle text-muted me-2"></i>
+                                            <span class="text-muted">Usuario Creado</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="row mt-3">
                         <div class="col-12">
                             <h6><strong>Observaciones</strong></h6>
